@@ -9,9 +9,12 @@ const {
 	registerUser,
 	loginUser,
 	checkIfUserLoggedIn,
+	findOneuser,
 } = require("../Controllers/userControllers");
 
-router.get("/", getAllUser);
+router.get("/", userToken, getAllUser);
+
+router.get("/OneUser/:id", userToken, findOneuser);
 
 router.get("/loggedInOrNot", userToken, checkIfUserLoggedIn);
 

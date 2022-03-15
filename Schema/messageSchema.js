@@ -2,20 +2,16 @@ const mongoose = require("mongoose");
 
 const d = new Date();
 
-const userSchema = new mongoose.Schema({
-	name: {
+const messageSchema = new mongoose.Schema({
+	fromUserId: {
 		type: String,
 		required: true,
 	},
-	email: {
+	toUserId: {
 		type: String,
 		required: true,
 	},
-	password: {
-		type: String,
-		required: true,
-	},
-	cPassword: {
+	message: {
 		type: String,
 		required: true,
 	},
@@ -29,6 +25,6 @@ const userSchema = new mongoose.Schema({
 	},
 });
 
-const User = mongoose.model("user", userSchema);
+const Message = mongoose.model("message", messageSchema);
 
-module.exports = User;
+module.exports = Message;

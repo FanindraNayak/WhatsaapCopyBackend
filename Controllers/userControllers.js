@@ -29,6 +29,22 @@ module.exports.checkIfUserLoggedIn = async (req, res) => {
 	}
 };
 
+// Get a singe user info
+module.exports.findOneuser = async (req, res) => {
+	try {
+		console.log(req.params.id);
+		const data = await User.find(
+			{ _id: req.params.id },
+			{ name: 1, email: 1, createdAt: 1, updatedAt: 1 }
+		);
+		console.log(data[0]);
+		res.send({ message: data[0] });
+	} catch (error) {
+		console.log(error);
+		res.send({ message: "Error" });
+	}
+};
+
 module.exports.registerUser = async (req, res) => {
 	try {
 		const { name, email, password, cPassword } = req.body;
@@ -62,32 +78,35 @@ module.exports.loginUser = async (req, res) => {
 			res.status(400).send({ message: "Check All the entry" });
 		} else {
 			const data = await User.findOne({ email: email });
-			// MOngodb UserId
-			const UserIdFromMongoDb = data._id.toString();
+			console.log(data);
+			if (data !== null) {
+				// MOngodb UserId
+				const UserIdFromMongoDb = data._id.toString();
 
-			const userLoggedInChecking = await bcrypt.compare(
-				password,
-				data.password
-			);
-
-			if (userLoggedInChecking) {
-				const jasonWebToken = jwt.sign(
-					{
-						name: data.name,
-						userId: UserIdFromMongoDb,
-						email: data.email,
-					},
-					"secretPassword",
-					{ expiresIn: "5hr" }
+				const userLoggedInChecking = await bcrypt.compare(
+					password,
+					data.password
 				);
 
-				res.cookie("user", jasonWebToken, {
-					maxAge: 2 * 60 * 60 * 1000,
-					httpOnly: true,
-					secure: false,
-					// SameSite: "none",
-				});
-				res.send({ message: "user Logged In" });
+				if (userLoggedInChecking) {
+					const jasonWebToken = jwt.sign(
+						{
+							name: data.name,
+							userId: UserIdFromMongoDb,
+							email: data.email,
+						},
+						"secretPassword",
+						{ expiresIn: "5hr" }
+					);
+
+					res.cookie("user", jasonWebToken, {
+						maxAge: 2 * 60 * 60 * 1000,
+						httpOnly: true,
+						secure: false,
+						// SameSite: "none",
+					});
+					res.send({ message: "user Logged In" });
+				} else res.send({ message: "Error" });
 			} else res.send({ message: "Error" });
 		}
 	} catch (error) {

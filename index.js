@@ -21,5 +21,6 @@ app.get("/", (req, res) => {
 // UserRoutes
 
 app.use("/user", require("./Routes/userRoutes"));
+app.use("/message", require("./Routes/messageRoutes"));
 
 app.listen(8080, () => console.log("Listining"));
