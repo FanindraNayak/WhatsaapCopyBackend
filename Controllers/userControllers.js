@@ -2,11 +2,14 @@ const User = require("../Schema/userSchema");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const res = require("express/lib/response");
 
 module.exports.getAllUser = async (req, res) => {
 	try {
+		const { userId } = req;
+		// console.log(userId);
 		const data = await User.find(
-			{},
+			{ _id: { $nin: [userId] } },
 			{ name: 1, email: 1, createdAt: 1, updatedAt: 1 }
 		);
 		res.send({ data: data });
@@ -32,12 +35,12 @@ module.exports.checkIfUserLoggedIn = async (req, res) => {
 // Get a singe user info
 module.exports.findOneuser = async (req, res) => {
 	try {
-		console.log(req.params.id);
+		// console.log(req.params.id);
 		const data = await User.find(
 			{ _id: req.params.id },
 			{ name: 1, email: 1, createdAt: 1, updatedAt: 1 }
 		);
-		console.log(data[0]);
+		// console.log(data[0]);
 		res.send({ message: data[0] });
 	} catch (error) {
 		console.log(error);
@@ -78,7 +81,6 @@ module.exports.loginUser = async (req, res) => {
 			res.status(400).send({ message: "Check All the entry" });
 		} else {
 			const data = await User.findOne({ email: email });
-			console.log(data);
 			if (data !== null) {
 				// MOngodb UserId
 				const UserIdFromMongoDb = data._id.toString();
@@ -112,5 +114,14 @@ module.exports.loginUser = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		res.send("error");
+	}
+};
+
+module.exports.logoutFunction = async (req, res) => {
+	try {
+		res.clearCookie("user");
+		res.send({ message: "LoggedOut" });
+	} catch (error) {
+		res.send({ message: "Error" });
 	}
 };

@@ -4,7 +4,7 @@ const Message = require("../Schema/messageSchema");
 module.exports.getAllMessage = async (req, res) => {
 	try {
 		const data = await Message.find({});
-		console.log(data);
+		// console.log(data);
 		res.send({ message: "yes" });
 	} catch (error) {
 		console.log(error);
@@ -45,3 +45,5 @@ module.exports.postMessage = async (req, res) => {
 		res.send({ message: "error" });
 	}
 };
+
+// Last person message
